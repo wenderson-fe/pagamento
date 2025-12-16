@@ -13,8 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class PagamentoService {
     private PagamentoRepository pagamentoRepository;
@@ -75,4 +73,13 @@ public class PagamentoService {
         return new PagamentoDTO(pagamento);
     }
 
+    @Transactional()
+    public PagamentoDTO alteraStatus(Long id) {
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        pagamento.setStatus(Status.CONFIRMADO_SEM_INTEGRACAO);
+
+        return new PagamentoDTO(pagamento);
+    }
 }
