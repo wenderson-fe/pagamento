@@ -2,6 +2,7 @@ package br.com.food.pagamentos.service;
 
 import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
+import br.com.food.pagamentos.http.PedidoClient;
 import br.com.food.pagamentos.model.Pagamento;
 import br.com.food.pagamentos.model.Status;
 import br.com.food.pagamentos.repository.PagamentoRepository;
@@ -12,14 +13,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PagamentoService {
     private PagamentoRepository pagamentoRepository;
     private ModelMapper modelMapper;
+    private PedidoClient pedidoClient;
 
-    public PagamentoService(PagamentoRepository pagamentoRepository, ModelMapper modelMapper) {
+    public PagamentoService(PagamentoRepository pagamentoRepository, ModelMapper modelMapper, PedidoClient pedidoClient) {
         this.pagamentoRepository = pagamentoRepository;
         this.modelMapper = modelMapper;
+        this.pedidoClient = pedidoClient;
     }
 
     public Page<PagamentoDTO> obterTodos(Pageable paginacao) {
@@ -56,4 +61,18 @@ public class PagamentoService {
     public void excluirPagamento(Long id) {
         pagamentoRepository.deleteById(id);
     }
+
+    // Confirma o pagamento e notifica o serviço de Pedidos.
+    @Transactional
+    public PagamentoDTO confirmarPagamento(Long id){
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
+
+        pagamento.setStatus(Status.CONFIRMADO);
+
+        pedidoClient.atualizaPagamento(pagamento.getPedidoId());
+
+        return new PagamentoDTO(pagamento);
+    }
+
 }
