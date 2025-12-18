@@ -1,17 +1,22 @@
 package br.com.food.pagamentos.service;
 
+import br.com.food.pagamentos.dto.PedidoDTO;
 import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
+import br.com.food.pagamentos.dto.PagamentoComItensDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
 import br.com.food.pagamentos.http.PedidoClient;
 import br.com.food.pagamentos.model.Pagamento;
 import br.com.food.pagamentos.model.Status;
 import br.com.food.pagamentos.repository.PagamentoRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PagamentoService {
@@ -36,6 +41,25 @@ public class PagamentoService {
                 .orElseThrow(EntityNotFoundException::new);
 
         return new PagamentoDTO(pagamento);
+    }
+
+    @CircuitBreaker(name = "pedidoItens", fallbackMethod = "pagamentoComListaDeItensVazia")
+    public PagamentoComItensDTO obterPorIdComItensDoPedido(Long id) {
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
+
+        PedidoDTO itensDoPedido = pedidoClient.obterPedidoComItens(pagamento.getPedidoId());
+
+        return new PagamentoComItensDTO(pagamento, itensDoPedido);
+    }
+
+    // fallback de "obterPorIdComItensDoPedido"
+    public PagamentoComItensDTO pagamentoComListaDeItensVazia(Long id, Exception e) {
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
+
+        // Retorna o pedido com lista de itens vazia.
+        return new PagamentoComItensDTO(pagamento, new PedidoDTO(List.of()));
     }
 
     @Transactional

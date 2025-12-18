@@ -1,6 +1,7 @@
 package br.com.food.pagamentos.controller;
 
 import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
+import br.com.food.pagamentos.dto.PagamentoComItensDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
 import br.com.food.pagamentos.service.PagamentoService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -32,6 +33,14 @@ public class PagamentoController {
     public ResponseEntity<PagamentoDTO> detalhar(@PathVariable @NotNull Long id) {
         PagamentoDTO dto = pagamentoService.obterPorId(id);
         return ResponseEntity.ok(dto);
+    }
+
+    // Retorna os dados do pagamento agregados com os itens do pedido associado,
+    // realizando uma chamada ao serviço de Pedidos para compor a resposta.
+    @GetMapping("/{id}/itens")
+    public ResponseEntity<PagamentoComItensDTO> detalharComItensDoPedido(@PathVariable @NotNull Long id) {
+        PagamentoComItensDTO pagamentoComItens = pagamentoService.obterPorIdComItensDoPedido(id);
+        return ResponseEntity.ok(pagamentoComItens);
     }
 
     @PostMapping
