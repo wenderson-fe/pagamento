@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,6 +87,7 @@ public class PagamentoService {
 
     // Confirma o pagamento e notifica o serviço de Pedidos.
     @Transactional
+    @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoComConfirmacaoPendente")
     public PagamentoDTO confirmarPagamento(Long id){
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
@@ -97,8 +99,9 @@ public class PagamentoService {
         return new PagamentoDTO(pagamento);
     }
 
+    // fallback de "confirmarPagamento"
     @Transactional()
-    public PagamentoDTO alteraStatus(Long id) {
+    public PagamentoDTO pagamentoComConfirmacaoPendente(Long id, Exception e) {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 

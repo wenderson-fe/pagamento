@@ -64,15 +64,8 @@ public class PagamentoController {
     }
 
     @PatchMapping("/{id}/confirmar")
-    @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoAutorizadoComConfirmacaoPendente")
     public ResponseEntity<PagamentoDTO> confirmarPagamento(@PathVariable @NotNull Long id) {
         PagamentoDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
         return  ResponseEntity.ok(pagamentoConfirmado);
-    }
-
-    // Método de fallback.
-    public ResponseEntity<PagamentoDTO> pagamentoAutorizadoComConfirmacaoPendente(Long id, Exception e) {
-        PagamentoDTO pagamentoSemIntegracao = pagamentoService.alteraStatus(id);
-        return ResponseEntity.ok(pagamentoSemIntegracao);
     }
 }
