@@ -1,5 +1,6 @@
 package br.com.food.pagamentos.controller;
 
+import br.com.food.pagamentos.controller.openapi.PagamentoControllerOpenApi;
 import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
 import br.com.food.pagamentos.dto.PagamentoComItensDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
@@ -19,7 +20,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/pagamento")
-public class PagamentoController {
+public class PagamentoController implements PagamentoControllerOpenApi {
     @Autowired
     private PagamentoService pagamentoService;
 
