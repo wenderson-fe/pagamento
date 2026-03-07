@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/pagamentos")
+@RequestMapping("/pagamento")
 public class PagamentoController {
     @Autowired
     private PagamentoService pagamentoService;
@@ -30,7 +30,7 @@ public class PagamentoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PagamentoDTO> detalhar(@PathVariable @NotNull Long id) {
+    public ResponseEntity<PagamentoDTO> detalhar(@PathVariable Long id) {
         PagamentoDTO dto = pagamentoService.obterPorId(id);
         return ResponseEntity.ok(dto);
     }
@@ -38,7 +38,7 @@ public class PagamentoController {
     // Retorna os dados do pagamento agregados com os itens do pedido associado,
     // realizando uma chamada ao serviço de Pedidos para compor a resposta.
     @GetMapping("/{id}/itens")
-    public ResponseEntity<PagamentoComItensDTO> detalharComItensDoPedido(@PathVariable @NotNull Long id) {
+    public ResponseEntity<PagamentoComItensDTO> detalharComItensDoPedido(@PathVariable Long id) {
         PagamentoComItensDTO pagamentoComItens = pagamentoService.obterPorIdComItensDoPedido(id);
         return ResponseEntity.ok(pagamentoComItens);
     }
@@ -52,19 +52,19 @@ public class PagamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PagamentoDTO> atualizar(@PathVariable @NotNull Long id, @RequestBody @Valid PagamentoAtualizacaoDTO dto) {
+    public ResponseEntity<PagamentoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PagamentoAtualizacaoDTO dto) {
         PagamentoDTO atualizado = pagamentoService.atualizarPagamento(id, dto);
         return ResponseEntity.ok(atualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable @NotNull Long id) {
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
         pagamentoService.excluirPagamento(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/confirmar")
-    public ResponseEntity<PagamentoDTO> confirmarPagamento(@PathVariable @NotNull Long id) {
+    public ResponseEntity<PagamentoDTO> confirmarPagamento(@PathVariable Long id) {
         PagamentoDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
         return  ResponseEntity.ok(pagamentoConfirmado);
     }

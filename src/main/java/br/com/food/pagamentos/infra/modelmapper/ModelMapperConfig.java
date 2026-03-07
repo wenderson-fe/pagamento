@@ -1,4 +1,4 @@
-package br.com.food.pagamentos.config;
+package br.com.food.pagamentos.infra.modelmapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

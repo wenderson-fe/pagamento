@@ -74,7 +74,8 @@ public class PagamentoService {
 
     @Transactional
     public PagamentoDTO atualizarPagamento(Long id, PagamentoAtualizacaoDTO dto) {
-        Pagamento pagamento = pagamentoRepository.getReferenceById(id);
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
         modelMapper.map(dto, pagamento);
 
         return new PagamentoDTO(pagamento);
@@ -82,6 +83,9 @@ public class PagamentoService {
 
     @Transactional
     public void excluirPagamento(Long id) {
+        if(!pagamentoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Pagamento não encontrado com o id: " + id);
+        }
         pagamentoRepository.deleteById(id);
     }
 
