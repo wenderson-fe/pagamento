@@ -64,7 +64,7 @@ public class PagamentoController implements PagamentoControllerOpenApi {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/confirmar")
+    @PostMapping("/{id}/confirmar")
     public ResponseEntity<PagamentoDTO> confirmarPagamento(@PathVariable Long id) {
         PagamentoDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
         return  ResponseEntity.ok(pagamentoConfirmado);
