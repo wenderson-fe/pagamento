@@ -5,9 +5,7 @@ import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
 import br.com.food.pagamentos.dto.PagamentoComItensDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
 import br.com.food.pagamentos.service.PagamentoService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +23,11 @@ public class PagamentoController implements PagamentoControllerOpenApi {
     private PagamentoService pagamentoService;
 
     @GetMapping
-    public ResponseEntity<Page<PagamentoDTO>> listar(@PageableDefault(size = 10) Pageable paginacao) {
-        Page<PagamentoDTO> page = pagamentoService.obterTodos(paginacao);
-        return ResponseEntity.ok().body(page);
+    public ResponseEntity<Page<PagamentoDTO>> listar(
+            @RequestParam(required = false) Long pedidoId,
+            @PageableDefault(size = 10) Pageable paginacao) {
+
+        return ResponseEntity.ok().body(pagamentoService.obterTodos(paginacao, pedidoId));
     }
 
     @GetMapping("/{id}")

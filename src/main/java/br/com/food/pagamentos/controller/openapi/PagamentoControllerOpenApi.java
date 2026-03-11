@@ -17,7 +17,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 public interface PagamentoControllerOpenApi {
 
     @Operation(summary = "Lista todos os pagamentos", description = "Retorna uma lista paginada de todos os registros de pagamentos.")
-    ResponseEntity<Page<PagamentoDTO>> listar(@Parameter(description = "Configuração de paginação") Pageable paginacao);
+    ResponseEntity<Page<PagamentoDTO>> listar(
+            @Parameter(
+                    description = "ID do pedido para filtrar os pagamentos. Caso não seja informado, serão listados todos os pagamentos paginados",
+                    example = "10")
+            Long pedidoId,
+            @Parameter(description = "Configuração de paginação") Pageable paginacao);
 
     @Operation(summary = "Busca pagamento por ID")
     @ApiResponses(value = {

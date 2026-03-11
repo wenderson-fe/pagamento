@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +30,12 @@ public class PagamentoService {
         this.pedidoClient = pedidoClient;
     }
 
-    public Page<PagamentoDTO> obterTodos(Pageable paginacao) {
+    public Page<PagamentoDTO> obterTodos(Pageable paginacao, Long pedidoId) {
+        if (pedidoId != null) {
+            return pagamentoRepository.findAllByPedidoId(pedidoId, paginacao)
+                    .map(PagamentoDTO::new);
+        }
+
         return pagamentoRepository
                 .findAll(paginacao)
                 .map(PagamentoDTO::new);
