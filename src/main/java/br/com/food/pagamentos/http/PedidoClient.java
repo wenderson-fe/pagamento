@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface PedidoClient {
     // Realiza uma chamada HTTP PUT ao serviço de Pedidos
     // para atualizar o status do pedido para "PAGO".
-    @RequestMapping(method = RequestMethod.PUT, value = "/pedidos/{id}/pago")
+    @RequestMapping(method = RequestMethod.POST, value = "/pedidos/{id}/pago")
     void atualizaPagamento(@PathVariable Long id);
 
     @RequestMapping(method = RequestMethod.GET, value = "/pedidos/{id}")
