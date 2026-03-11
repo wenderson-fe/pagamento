@@ -1,4 +1,4 @@
-package br.com.food.pagamentos.http;
+package br.com.food.pagamentos.infra.http;
 
 import br.com.food.pagamentos.dto.PedidoDTO;
 import org.springframework.cloud.openfeign.FeignClient;

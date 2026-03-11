@@ -4,7 +4,7 @@ import br.com.food.pagamentos.dto.PedidoDTO;
 import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
 import br.com.food.pagamentos.dto.PagamentoComItensDTO;
 import br.com.food.pagamentos.dto.PagamentoDTO;
-import br.com.food.pagamentos.http.PedidoClient;
+import br.com.food.pagamentos.infra.http.PedidoClient;
 import br.com.food.pagamentos.model.Pagamento;
 import br.com.food.pagamentos.model.Status;
 import br.com.food.pagamentos.repository.PagamentoRepository;
