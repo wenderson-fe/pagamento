@@ -69,4 +69,11 @@ public class PagamentoController implements PagamentoControllerOpenApi {
         PagamentoDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
         return  ResponseEntity.ok(pagamentoConfirmado);
     }
+
+    @PostMapping("/cancelar-por-pedido/{pedidoId}")
+    public ResponseEntity<Void> cancelarPagamentoPorPedido(@PathVariable Long pedidoId) {
+        pagamentoService.cancelarPagamentoPorPedido(pedidoId);
+        return ResponseEntity.ok().build();
+    }
+
 }

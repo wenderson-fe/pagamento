@@ -117,4 +117,17 @@ public class PagamentoService {
 
         return new PagamentoDTO(pagamento);
     }
+
+    @Transactional
+    public void cancelarPagamentoPorPedido(Long pedidoId) {
+        List<Pagamento> pagamentos = pagamentoRepository.findAllByPedidoId(pedidoId);
+
+        if(pagamentos.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum pagamento encontrado para o pedido: " + pedidoId);
+        }
+
+        pagamentos.stream()
+                .filter(p -> !Status.CANCELADO.equals(p.getStatus()))
+                .forEach(p -> p.setStatus(Status.CANCELADO));
+    }
 }
