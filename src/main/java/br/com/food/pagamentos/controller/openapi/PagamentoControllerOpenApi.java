@@ -68,4 +68,17 @@ public interface PagamentoControllerOpenApi {
             @ApiResponse(responseCode = "404", ref = "NotFound")
     })
     ResponseEntity<PagamentoDTO> confirmarPagamento(@Parameter(description = "ID do pagamento") Long id);
+
+    @Operation(
+            summary = "Cancela pagamentos por ID do Pedido",
+            description = "Localiza todos os pagamentos associados a um pedido e altera seus status para CANCELADO, ignorando os que já estão cancelados."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pagamentos processados com sucesso"),
+            @ApiResponse(responseCode = "404", ref = "NotFound")
+    })
+    ResponseEntity<Void> cancelarPagamentoPorPedido(
+            @Parameter(description = "ID do pedido cujos pagamentos serão cancelados", example = "123")
+            Long pedidoId
+    );
 }
