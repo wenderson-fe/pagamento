@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: pagamento-api
+  datasource:
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}?createDatabaseIfNotExist=true
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: true
+
+# Porta em que a aplicação será executada.
+# Ao usar "0", o Spring Boot atribui automaticamente uma porta aleatória disponível no sistema.
+server:
+  port: 0
+
+eureka:
+  client:
+    serviceUrl:
+      # URL do Eureka Server.
+      # O cliente utiliza esse endereço para localizar o Service Registry
+      # Se a variável EUREKA_ZONE existir, usa ela
+      # Se não, usa localhost (valor padrão após os dois pontos)
+      defaultZone: ${EUREKA_ZONE:http://localhost:8081/eureka}
+  instance:
+    # Define um identificador único para cada instância do serviço no Eureka,
+    # combinando o nome da aplicação com um valor aleatório.
+    instanceId: ${spring.application.name}:${random.int}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      atualizaPedido:
+        # Define o número de chamadas mais recentes consideradas
+        # no cálculo da taxa de falhas do Circuit Breaker.
+        slidingWindowSize: 3
+        # Define a quantidade mínima de chamadas registradas
+        # antes que o Circuit Breaker passe a avaliar a taxa de falhas.
+        minimumNumberOfCalls: 2
+        # Define o tempo em que o Circuit Breaker permanece no estado OPEN.
+        waitDurationInOpenState: 60s
