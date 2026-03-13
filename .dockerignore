@@ -1,0 +1,40 @@
+# Build artifacts
+target/
+build/
+out/
+bin/
+# Ignorar jars porque o build ocorre dentro do container
+*.jar
+*.war
+
+# Secrets
+.env
+.env.*
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Logs / Temp
+logs/
+*.log
+tmp/
+
+# Docker
+.dockerignore
+docker-compose.yml
+
+# OS
+.DS_Store
+Thumbs.db
