@@ -1,9 +1,10 @@
 package br.com.food.pagamentos.service;
 
-import br.com.food.pagamentos.dto.PedidoDTO;
-import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
-import br.com.food.pagamentos.dto.PagamentoComItensDTO;
-import br.com.food.pagamentos.dto.PagamentoDTO;
+import br.com.food.pagamentos.dto.response.PedidoDTO;
+import br.com.food.pagamentos.dto.request.PagamentoAtualizacaoDTO;
+import br.com.food.pagamentos.dto.response.PagamentoComItensDTO;
+import br.com.food.pagamentos.dto.request.PagamentoRequestDTO;
+import br.com.food.pagamentos.dto.response.PagamentoResponseDTO;
 import br.com.food.pagamentos.infra.http.PedidoClient;
 import br.com.food.pagamentos.model.Pagamento;
 import br.com.food.pagamentos.model.Status;
@@ -30,22 +31,22 @@ public class PagamentoService {
         this.pedidoClient = pedidoClient;
     }
 
-    public Page<PagamentoDTO> obterTodos(Pageable paginacao, Long pedidoId) {
+    public Page<PagamentoResponseDTO> obterTodos(Pageable paginacao, Long pedidoId) {
         if (pedidoId != null) {
             return pagamentoRepository.findAllByPedidoId(pedidoId, paginacao)
-                    .map(PagamentoDTO::new);
+                    .map(PagamentoResponseDTO::fromEntity);
         }
 
         return pagamentoRepository
                 .findAll(paginacao)
-                .map(PagamentoDTO::new);
+                .map(PagamentoResponseDTO::fromEntity);
     }
 
-    public PagamentoDTO obterPorId(Long id) {
+    public PagamentoResponseDTO obterPorId(Long id) {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        return new PagamentoDTO(pagamento);
+        return PagamentoResponseDTO.fromEntity(pagamento);
     }
 
     @CircuitBreaker(name = "pedidoItens", fallbackMethod = "pagamentoComListaDeItensVazia")
@@ -68,21 +69,22 @@ public class PagamentoService {
     }
 
     @Transactional
-    public PagamentoDTO criarPagamento(PagamentoDTO dto) {
-        Pagamento pagamento = modelMapper.map(dto, Pagamento.class);
+    public PagamentoResponseDTO criarPagamento(PagamentoRequestDTO dtoRequest) {
+        Pagamento pagamento = modelMapper.map(dtoRequest, Pagamento.class);
         pagamento.setStatus(Status.CRIADO);
         pagamentoRepository.save(pagamento);
 
-        return new PagamentoDTO(pagamento);
+        return PagamentoResponseDTO.fromEntity(pagamento);
     }
 
     @Transactional
-    public PagamentoDTO atualizarPagamento(Long id, PagamentoAtualizacaoDTO dto) {
+    public PagamentoResponseDTO atualizarPagamento(Long id, PagamentoAtualizacaoDTO dto) {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
+
         modelMapper.map(dto, pagamento);
 
-        return new PagamentoDTO(pagamento);
+        return PagamentoResponseDTO.fromEntity(pagamento);
     }
 
     @Transactional
@@ -96,7 +98,7 @@ public class PagamentoService {
     // Confirma o pagamento e notifica o serviço de Pedidos.
     @Transactional
     @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoComConfirmacaoPendente")
-    public PagamentoDTO confirmarPagamento(Long id){
+    public PagamentoResponseDTO confirmarPagamento(Long id){
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o id: " + id));
 
@@ -104,18 +106,18 @@ public class PagamentoService {
 
         pedidoClient.atualizaPagamento(pagamento.getPedidoId());
 
-        return new PagamentoDTO(pagamento);
+        return PagamentoResponseDTO.fromEntity(pagamento);
     }
 
     // fallback de "confirmarPagamento"
     @Transactional()
-    public PagamentoDTO pagamentoComConfirmacaoPendente(Long id, Exception e) {
+    public PagamentoResponseDTO pagamentoComConfirmacaoPendente(Long id, Exception e) {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
         pagamento.setStatus(Status.CONFIRMADO_SEM_INTEGRACAO);
 
-        return new PagamentoDTO(pagamento);
+        return PagamentoResponseDTO.fromEntity(pagamento);
     }
 
     @Transactional

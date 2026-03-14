@@ -1,6 +1,6 @@
 package br.com.food.pagamentos.infra.http;
 
-import br.com.food.pagamentos.dto.PedidoDTO;
+import br.com.food.pagamentos.dto.response.PedidoDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,9 +1,10 @@
 package br.com.food.pagamentos.controller;
 
 import br.com.food.pagamentos.controller.openapi.PagamentoControllerOpenApi;
-import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
-import br.com.food.pagamentos.dto.PagamentoComItensDTO;
-import br.com.food.pagamentos.dto.PagamentoDTO;
+import br.com.food.pagamentos.dto.request.PagamentoAtualizacaoDTO;
+import br.com.food.pagamentos.dto.response.PagamentoComItensDTO;
+import br.com.food.pagamentos.dto.request.PagamentoRequestDTO;
+import br.com.food.pagamentos.dto.response.PagamentoResponseDTO;
 import br.com.food.pagamentos.service.PagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class PagamentoController implements PagamentoControllerOpenApi {
     private PagamentoService pagamentoService;
 
     @GetMapping
-    public ResponseEntity<Page<PagamentoDTO>> listar(
+    public ResponseEntity<Page<PagamentoResponseDTO>> listar(
             @RequestParam(required = false) Long pedidoId,
             @PageableDefault(size = 10) Pageable paginacao) {
 
@@ -31,8 +32,8 @@ public class PagamentoController implements PagamentoControllerOpenApi {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PagamentoDTO> detalhar(@PathVariable Long id) {
-        PagamentoDTO dto = pagamentoService.obterPorId(id);
+    public ResponseEntity<PagamentoResponseDTO> detalhar(@PathVariable Long id) {
+        PagamentoResponseDTO dto = pagamentoService.obterPorId(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -45,16 +46,16 @@ public class PagamentoController implements PagamentoControllerOpenApi {
     }
 
     @PostMapping
-    public ResponseEntity<PagamentoDTO> cadastrar(@RequestBody @Valid PagamentoDTO dto, UriComponentsBuilder uriBuilder) {
-        PagamentoDTO pagamento = pagamentoService.criarPagamento(dto);
+    public ResponseEntity<PagamentoResponseDTO> cadastrar(@RequestBody @Valid PagamentoRequestDTO dtoRequest, UriComponentsBuilder uriBuilder) {
+        PagamentoResponseDTO pagamento = pagamentoService.criarPagamento(dtoRequest);
         URI endereco = uriBuilder.path("/pagamento/{id}").buildAndExpand(pagamento.id()).toUri();
 
         return ResponseEntity.created(endereco).body(pagamento);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PagamentoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PagamentoAtualizacaoDTO dto) {
-        PagamentoDTO atualizado = pagamentoService.atualizarPagamento(id, dto);
+    public ResponseEntity<PagamentoResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PagamentoAtualizacaoDTO dto) {
+        PagamentoResponseDTO atualizado = pagamentoService.atualizarPagamento(id, dto);
         return ResponseEntity.ok(atualizado);
     }
 
@@ -65,8 +66,8 @@ public class PagamentoController implements PagamentoControllerOpenApi {
     }
 
     @PostMapping("/{id}/confirmar")
-    public ResponseEntity<PagamentoDTO> confirmarPagamento(@PathVariable Long id) {
-        PagamentoDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
+    public ResponseEntity<PagamentoResponseDTO> confirmarPagamento(@PathVariable Long id) {
+        PagamentoResponseDTO pagamentoConfirmado = pagamentoService.confirmarPagamento(id);
         return  ResponseEntity.ok(pagamentoConfirmado);
     }
 

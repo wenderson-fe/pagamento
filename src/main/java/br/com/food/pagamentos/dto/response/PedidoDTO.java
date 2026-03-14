@@ -1,4 +1,4 @@
-package br.com.food.pagamentos.dto;
+package br.com.food.pagamentos.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

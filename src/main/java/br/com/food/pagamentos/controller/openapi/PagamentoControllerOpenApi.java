@@ -1,8 +1,9 @@
 package br.com.food.pagamentos.controller.openapi;
 
-import br.com.food.pagamentos.dto.PagamentoAtualizacaoDTO;
-import br.com.food.pagamentos.dto.PagamentoComItensDTO;
-import br.com.food.pagamentos.dto.PagamentoDTO;
+import br.com.food.pagamentos.dto.request.PagamentoAtualizacaoDTO;
+import br.com.food.pagamentos.dto.response.PagamentoComItensDTO;
+import br.com.food.pagamentos.dto.request.PagamentoRequestDTO;
+import br.com.food.pagamentos.dto.response.PagamentoResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public interface PagamentoControllerOpenApi {
 
     @Operation(summary = "Lista todos os pagamentos", description = "Retorna uma lista paginada de todos os registros de pagamentos.")
-    ResponseEntity<Page<PagamentoDTO>> listar(
+    ResponseEntity<Page<PagamentoResponseDTO>> listar(
             @Parameter(
                     description = "ID do pedido para filtrar os pagamentos. Caso não seja informado, serão listados todos os pagamentos paginados",
                     example = "10")
@@ -29,7 +30,7 @@ public interface PagamentoControllerOpenApi {
             @ApiResponse(responseCode = "200", description = "Pagamento encontrado"),
             @ApiResponse(responseCode = "404", ref = "NotFound")
     })
-    ResponseEntity<PagamentoDTO> detalhar(@Parameter(description = "ID do pagamento", example = "1") Long id);
+    ResponseEntity<PagamentoResponseDTO> detalhar(@Parameter(description = "ID do pagamento", example = "1") Long id);
 
     @Operation(summary = "Busca pagamento detalhado com itens",
             description = "Agrega dados do pagamento com os itens do pedido via comunicação entre microsserviços")
@@ -44,7 +45,7 @@ public interface PagamentoControllerOpenApi {
             @ApiResponse(responseCode = "201", description = "Pagamento criado com sucesso"),
             @ApiResponse(responseCode = "400", ref = "BadRequest")
     })
-    ResponseEntity<PagamentoDTO> cadastrar(PagamentoDTO dto, UriComponentsBuilder uriBuilder);
+    ResponseEntity<PagamentoResponseDTO> cadastrar(PagamentoRequestDTO dto, UriComponentsBuilder uriBuilder);
 
     @Operation(summary = "Atualiza dados de um pagamento")
     @ApiResponses(value = {
@@ -52,7 +53,7 @@ public interface PagamentoControllerOpenApi {
             @ApiResponse(responseCode = "400", ref = "BadRequest"),
             @ApiResponse(responseCode = "404", ref = "NotFound")
     })
-    ResponseEntity<PagamentoDTO> atualizar(@Parameter(description = "ID do pagamento") Long id, PagamentoAtualizacaoDTO dto);
+    ResponseEntity<PagamentoResponseDTO> atualizar(@Parameter(description = "ID do pagamento") Long id, PagamentoAtualizacaoDTO dto);
 
     @Operation(summary = "Exclui um registro de pagamento")
     @ApiResponses(value = {
@@ -67,7 +68,7 @@ public interface PagamentoControllerOpenApi {
             @ApiResponse(responseCode = "200", description = "Pagamento confirmado"),
             @ApiResponse(responseCode = "404", ref = "NotFound")
     })
-    ResponseEntity<PagamentoDTO> confirmarPagamento(@Parameter(description = "ID do pagamento") Long id);
+    ResponseEntity<PagamentoResponseDTO> confirmarPagamento(@Parameter(description = "ID do pagamento") Long id);
 
     @Operation(
             summary = "Cancela pagamentos por ID do Pedido",

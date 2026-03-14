@@ -1,4 +1,4 @@
-package br.com.food.pagamentos.dto;
+package br.com.food.pagamentos.dto.request;
 
 import br.com.food.pagamentos.model.Pagamento;
 import br.com.food.pagamentos.model.Status;

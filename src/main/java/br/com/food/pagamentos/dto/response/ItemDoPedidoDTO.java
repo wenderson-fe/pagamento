@@ -1,4 +1,4 @@
-package br.com.food.pagamentos.dto;
+package br.com.food.pagamentos.dto.response;
 
 public record ItemDoPedidoDTO(
         Long id,
